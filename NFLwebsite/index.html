@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDC 2020 Project</title>
+    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css" />
+    <link rel="stylesheet" href="custom_style.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Shrikhand&display=swap" rel="stylesheet">
+</head>
+
+<body style="background-color: rgb(223, 223, 223);">
+
+    <section class="hero is-dark is-fullheight">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    BETTING LINES AND BOLD-FACE LIES
+                </h1>
+                <h2 class="subtitle">
+                    Can we predict the outcome of NFL games better than sports experts?
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="content">
+                <h1 class="title">So... What Did We Do?</h1>
+                <h5 class="subtitle has-text-grey">Our questions, comments, and concerns</h5>
+                <blockquote>
+                    <b>Question: </b>Can we create a model that better predicts point differentials for betting in the NFL?
+                    <br/>
+                    <br/>
+                    <b>Concern: </b>Football is so unpredictable that predicting an outcome is essentially impossible.
+                    <br/>
+                    <br/>
+                    <b>Comment: </b>Although the above concern is true, there are certain statistics that could potentially improve the line used for betting.
+                    <br/>
+                </blockquote>
+                <p>We created this analysis for the Carolina Data Challenge. We were given NFL cumulative statistics from 2000 to 2013. 
+                    We worked to create a model to show which variables best predicted the point difference in any given NFL game. 
+                    This information would be applied to predict the point difference for future games, given average statistics for each significant variable, 
+                    in order to set a realistic line used for betting.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="section has-background-white">
+        <div class="container">
+            <div class="content has-text-centered">
+                <h1 class="title">Data</h1>
+                <h5 class="subtitle has-text-grey is-italic"><b>Here's some cool graphs!!</b></h5>
+                <br>
+                <h5 class="subtitle has-text-grey is-italic">The first chart (1) depicts correlations between variables that were
+                    used to help determine eventual point differentials. The second graph (2) represents our model's predictions
+                    compared to the actual point differential, while the the third graph (3) shows how the NFL's line judgement 
+                    compares to the eventual point differential as well.
+                </h5>
+                <br>
+            </div>
+            <div class="tabs is-medium is-centered">
+                <ul>
+                    <li><a
+                        href="images/graph01.jpg"><b>Correlations</b></a></li>
+                    <li><a
+                        href="images/graph02.jpg"><b>Our Prediction</b></a></li>
+                    <li><a
+                        href="images/graph03.jpg"><b>NFL Prediction</b></a></li>
+                </ul>
+            </div>
+            <br>
+            <br>
+            <div class="columns is-multiline justify-center">
+                <div class="column">
+                    <a href="images/graph01.jpg">
+                    <img src="https://schoolhousewa.org/wp-content/uploads/recruit-circle-1-icon-blue.png">
+                    </a>
+                </div>
+                <div class="column">
+                    <a href="images/graph02.jpg">
+                    <img src="https://iconsetc.com/icons-watermarks/flat-circle-white-on-black/alphanum/alphanum_number-2/alphanum_number-2_flat-circle-white-on-black_512x512.png">
+                    </a>
+                </div>
+                <div class="column">
+                    <a href="images/graph03.jpg">
+                    <img src="https://schoolhousewa.org/wp-content/uploads/recruit-circle-3-icon-blue.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <section class="section has-background-white">
+        <div class="container">
+            <div class="content has-text-centered">
+                <h1 class="title">Important Files</h1>
+                <h5 class="subtitle has-text-grey is-italic">This is where the blood, sweat, and tears went...</h5>
+                <br>
+                <h5 class="subtitle has-text-grey is-italic">The first file (1) is our knitted html document based on our work
+                    done in R Studio. The second file (2) is our complete RMD file containing our code and all statistical work
+                    done to reach our conclusions. The third file (3) is our final report summarizing the important questions, points,
+                    and images in a more professional, condensed format.
+                </h5>
+            </div>
+            <br>
+            <div class="tabs is-medium is-centered">
+                <ul>
+                    <li><a
+                        href="NFL2.html"><b>HTML File</b></a></li>
+                    <li><a
+                        href="NFL2.Rmd"><b>R Studio File</b></a></li>
+                    <li><a
+                        href="NFL Betting Line Analysis.docx"><b>Final Report</b></a></li>
+                </ul>
+            </div>
+            <br>
+            <br>
+            <div class="columns is-multiline justify-center">
+                <div class="column">
+                    <a href="NFL2.html">
+                        <img src="https://img2.pngio.com/number-1-circle-number-one-round-icon-round-number-png-512_512.png">
+                    </a>
+                </div>
+                <div class="column">
+                    <a href="NFL2.Rmd">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Icon_2_blue.svg/1200px-Icon_2_blue.svg.png">
+                    </a>
+                </div>
+                <div class="column">
+                    <a href="NFL Betting Line Analysis.docx">
+                        <img src="https://schoolhousewa.org/wp-content/uploads/recruit-circle-3-icon-blue.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="content">
+                <h1 class="title">What We Found</h1>
+                <h5 class="subtitle has-text-grey">And why it is significant</h5>
+                <blockquote>
+                    <b>It is apparent that our model predicted the point difference much better than the line at the time of the game. </b>
+    
+                    <br/>
+                </blockquote>
+                <p>Considering we acted retrospectively in determining which factors impacted point differentiation, this result is not surprising. However, this model and its most significant predictors could be used in future seasons to improve line bets. Our model uses statistics that do not occur until game time. By that effect, the model would become increasingly effective as the season progresses and more data is collected. An average of things like fumble recoveries, pass completions per game, and 3rd down conversions for each team would create a solid set of data to use for predictions with the model further into the season.
+
+                    Obviously, it is impossible to perfectly predict a football game’s outcome. At the end of the day it is still a game. However, using retroactive statistics may lead to greater insights for the future that might result in some financial reward. 
+                    </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section has-background-white">
+        <div class="container">
+            <div class="content has-text-centered">
+                <h1 class="title">CITATIONS</h1>
+            </div>
+            <div class="tabs is-medium is-centered">
+                <ul>
+                    <li><a href="page1.html">Images</a></li>
+                    <li><a href="page2.html">Other References</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+
+</body>
+
+</html>

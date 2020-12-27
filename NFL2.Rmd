@@ -1,0 +1,198 @@
+---
+title: 'Carolina Data Challenge: NFL'
+author: "Abigail Wingo and Alexander Morton"
+date: "October 4, 2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+We created this analysis for the Carolina Data Challenge. We were given NFL cumulative statistics from 2000 to 2013. We worked to create a model to show which variables best predicted the point difference in any given NFL game. This information would be applied to predict the point difference for future games, given average statistics for each significant variable, in order to set a realistic line used for betting. 
+
+First, we imported all of our data as separate dataframes for each year.
+```{r}
+library(RCurl)
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2000stats.csv")
+NFL2000 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2001stats.csv")
+NFL2001 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2002stats.csv")
+NFL2002 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2003stats.csv")
+NFL2003 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2004stats.csv")
+NFL2004 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2005stats.csv")
+NFL2005 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2006stats.csv")
+NFL2006 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2007stats.csv")
+NFL2007 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2008stats.csv")
+NFL2008 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2009stats.csv")
+NFL2009 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2010stats.csv")
+NFL2010 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2011stats.csv")
+NFL2011 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2012stats.csv")
+NFL2012 <- read.csv(text = x)
+
+x <- getURL("https://raw.githubusercontent.com/Carolina-Data-Challenge/datasets/main/FootballDatasets/NFL/CumulativeStats/nfl2013stats.csv")
+NFL2013 <- read.csv(text = x)
+```
+
+The more recent data sets had 2 extra variables, so we removed them so all the data would be consistent.
+
+```{r}
+NFL2009 <- NFL2009[-c(13,29)]
+NFL2010 <- NFL2010[-c(13,29)]
+NFL2011 <- NFL2011[-c(13,29)]
+NFL2012 <- NFL2012[-c(13,29)]
+NFL2013 <- NFL2013[-c(13,29)]
+```
+
+The earlier data sets variable Total Line was named differently, so we editted it for consistency. 
+
+```{r}
+colnames(NFL2002)[33] <- "TotalLine"
+colnames(NFL2003)[33] <- "TotalLine"
+colnames(NFL2004)[33] <- "TotalLine"
+colnames(NFL2005)[33] <- "TotalLine"
+colnames(NFL2006)[33] <- "TotalLine"
+colnames(NFL2007)[33] <- "TotalLine"
+```
+
+Next, we combined the 2002 to 2013 datasets, excluding the 2000 and 2001 datasets because they were missing two variables, Line and Total Line.
+
+```{r}
+NFL <- rbind(NFL2002, NFL2003, NFL2004, NFL2005, NFL2006, NFL2007, NFL2008, NFL2009, NFL2010, NFL2011, NFL2012, NFL2013)
+NFL$PointDifference <- (NFL$ScoreOff - NFL$ScoreDef)
+```
+
+One of the metrics was taken using percentages, so we removed the "%" from the numbers so the variable would be numeric.
+
+```{r}
+NFL$ThirdDownPctOff = as.numeric(gsub("[\\%,]", "", NFL$ThirdDownPctOff))
+NFL$ThirdDownPctDef = as.numeric(gsub("[\\%,]", "", NFL$ThirdDownPctDef))
+```
+
+Here, we added a variable of whether the team won or lost that game, using 0 as a loss and 1 as a win. 
+
+```{r}
+NFL$W.L <- 0
+for (i in 1:nrow(NFL)) {
+  if (NFL$PointDifference[i] > 0) {
+    NFL$W.L[i] = 1
+  } 
+}
+```
+
+Next, we converted the time of possession to seconds in order to use it as a numeric value in the analysis.
+
+```{r}
+library(stringr)
+NFL$SecondsOff <- (as.numeric(str_sub(NFL$TimePossOff, end=-4))*60) + (as.numeric(str_sub(NFL$TimePossOff, start=-2)))
+NFL$SecondsDef <- (as.numeric(str_sub(NFL$TimePossDef, end=-4))*60) + (as.numeric(str_sub(NFL$TimePossDef, start=-2)))
+```
+
+We used this function created by Professor McLean at UNC Chapel Hill to find the most significant variables to create the best model.
+
+```{r}
+ShowSubsets=function(regout){
+  z=summary(regout)
+  q=as.data.frame(z$outmat)
+  q$Rsq=round(z$rsq*100,2)
+  q$adjRsq=round(z$adjr2*100,2)
+  q$Cp=round(z$cp,2)
+  return(q)
+}
+```
+
+In order to perform a regression analysis, we had to move the PointDifference to the last column.
+
+```{r}
+NFL.2 <- NFL[c(1:33, 35:37, 34)]
+```
+
+Next, we removed variables that were not numeric or that were not needed for the analysis.
+
+```{r}
+NFL.3 <- NFL.2[-c(1:3, 13, 15, 17, 18, 28, 30,31,33,34)]
+```
+
+We removed any rows that had null values.
+
+```{r}
+NFL.4<-na.omit(NFL.3)
+```
+
+Then, we created a correlation plot to check for multicollinearity in the data.
+
+```{r}
+library(corrplot)
+corrplot(cor(NFL.4[-c(22)]), method = "circle")
+```
+
+We decided to remove variables that had a strong correlation.
+
+```{r}
+NFL.5 <- NFL.4[-c(18,6,4, 15,24,2,13,22)]
+head(NFL.5)
+```
+
+To find the best model, we performed a stepwise regression.
+
+```{r}
+Full=lm(PointDifference~., data=NFL.5)
+MSE=(summary(Full)$sigma)^2
+none=lm(PointDifference~1, data=NFL.5)
+step(none,scope=list(upper=Full), scale=MSE)
+```
+
+We found that the best model used all of the variables, but our goal was to narrow down the amount of variables needed so we performed another test to find the best model with 10 variables.
+
+```{r}
+library(leaps)
+all=regsubsets(PointDifference~., data=NFL.5, nbest=2, nvmax=10)
+ShowSubsets(all)
+```
+
+From this test, we created a model with the 10 variables that were the most impactful on the model.
+
+```{r}
+mod2=lm(PointDifference~SecondsOff+FumblesDef+PassIntDef+PassAttDef+FirstDownDef+FumblesOff+PassIntOff+FumblesOff+PassIntOff+PassYdsOff+PassAttOff+FirstDownOff, data=NFL.5)
+```
+
+Then, we created a plot to show the predicted point difference vs. the actual point difference, and the model was a very good fit. 
+
+```{r}
+library(ggplot2)
+NFL_pred = as.data.frame(predict(mod2, NFL.4))
+NFL.6 = cbind(NFL.4, NFL_pred)
+
+ggplot(data = NFL.6, aes(x=NFL.6$`predict(mod2, NFL.4)`,y=NFL.6$PointDifference))+
+  geom_point(color="blue")+ geom_smooth(color="red")+xlab('Predicted Point Difference') + ylab('Point Difference') + ggtitle("NFL Predicted Point Difference vs Actual Point Difference")
+```
+
+Next, we created a plot to compare the line of the game vs. the actual point difference.
+
+```{r}
+ggplot(data = NFL.6, aes(x=NFL.4$Line, y=NFL.4$PointDifference))+
+  geom_point(color="blue")+ geom_smooth(color="red")+xlab('Line') + ylab('Point Difference') + ggtitle("NFL Line vs Actual Point Difference")
+```
+
+From this, you can see that our model predicted the point difference much better than the line did. From this, we could use our model with data today to predict more accurate line values for each game. 
